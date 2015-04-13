@@ -5,6 +5,7 @@
 'use strict';
 
 var React = require('react-native');
+var ImageSlider = require('./application/components/ImageSlider');
 var {
   AppRegistry,
   StyleSheet,
@@ -15,18 +16,7 @@ var {
 var GesturePlayground = React.createClass({
   render: function() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.ios.js
-        </Text>
-        <Text style={styles.instructions}>
-          Press Cmd+R to reload,{'\n'}
-          Cmd+Control+Z for dev menu
-        </Text>
-      </View>
+      <ImageSlider />
     );
   }
 });
