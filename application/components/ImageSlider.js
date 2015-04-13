@@ -8,6 +8,8 @@ var {
   PanResponder,
 } = React;
 
+var AnimationExperimental = require('AnimationExperimental');
+
 var ImageSlider = React.createClass({
 
   _panResponder: {},
@@ -102,6 +104,7 @@ var ImageSlider = React.createClass({
         style={styles.container}
         {...this._panResponder.panHandlers}>
         <Image
+          ref="image"
           source={{uri: this.state.images[this.state.imageIndex]}}
           style={styles.image}
         />
