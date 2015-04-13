@@ -5,9 +5,65 @@ var {
   StyleSheet,
   Image,
   View,
+  PanResponder,
 } = React;
 
 var ImageSlider = React.createClass({
+
+  _panResponder: {},
+
+  componentWillMount: function() {
+    var endXPosition = null;
+    var startXPosition = null;
+
+    this._panResponder = PanResponder.create({
+      // Ask to be the responder:
+      onStartShouldSetPanResponder: (evt, gestureState) => true,
+      onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
+      onMoveShouldSetPanResponder: (evt, gestureState) => true,
+      onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
+
+      onPanResponderGrant: (evt, gestureState) => {
+        // The guesture has started. Show visual feedback so the user knows
+        // what is happening!
+
+        // gestureState.{x,y}0 will be set to zero now
+        console.log(gestureState);
+      },
+      onPanResponderMove: (evt, gestureState) => {
+        // The most recent move distance is gestureState.move{X,Y}
+
+        // The accumulated gesture distance since becoming responder is
+        // gestureState.d{x,y}
+        if(startXPosition === null)
+          startXPosition = gestureState.moveX;
+
+        console.log(gestureState);
+      },
+      onResponderTerminationRequest: (evt, gestureState) => true,
+      onPanResponderRelease: (evt, gestureState) => {
+        // The user has released all touches while this view is the
+        // responder. This typically means a gesture has succeeded
+        endXPosition = gestureState.moveX;
+        console.log('Finished: ' + gestureState);
+        console.log(gestureState);
+        console.log('Startposition: ' + startXPosition);
+        console.log('Endposition: ' + endXPosition);
+
+        if(startXPosition > endXPosition)
+          this.loadNextImage();
+        else
+          this.loadPreviousImage();
+
+        startXPosition = null;
+        endXPosition = null;
+      },
+      onPanResponderTerminate: (evt, gestureState) => {
+        // Another component has become the responder, so this gesture
+        // should be cancelled
+      },
+    });
+  },
 
   getInitialState: function() {
     return {
@@ -25,7 +81,9 @@ var ImageSlider = React.createClass({
     var currentImageIndex = this.state.imageIndex;
     var newImageIndex = currentImageIndex - 1;
 
-    return(newImageIndex < 0 || newImageIndex >= imageCount) ? this.setState({imageIndex: newImageIndex}) : currentImageIndex;
+    console.log('Loading previous image at index ' + newImageIndex);
+
+    return(newImageIndex >= 0 && newImageIndex <= imageCount - 1) ? this.setState({imageIndex: newImageIndex}) : currentImageIndex;
   },
 
   loadNextImage: function() {
@@ -33,12 +91,16 @@ var ImageSlider = React.createClass({
     var currentImageIndex = this.state.imageIndex;
     var newImageIndex = currentImageIndex + 1;
 
-    return(newImageIndex < 0 || newImageIndex >= imageCount) ? this.setState({imageIndex: newImageIndex}) : currentImageIndex;
+    console.log('Loading next image at index ' + newImageIndex);
+
+    return(newImageIndex >= 0 && newImageIndex <= imageCount - 1) ? this.setState({imageIndex: newImageIndex}) : currentImageIndex;
   },
 
   render: function() {
     return (
-      <View style={styles.container}>
+      <View
+        style={styles.container}
+        {...this._panResponder.panHandlers}>
         <Image
           source={{uri: this.state.images[this.state.imageIndex]}}
           style={styles.image}
