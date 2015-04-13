@@ -52,10 +52,15 @@ var ImageSlider = React.createClass({
         console.log('Startposition: ' + startXPosition);
         console.log('Endposition: ' + endXPosition);
 
+        var position = {
+          x: 0,
+          y: 0
+        }
+
         if(startXPosition > endXPosition)
-          this.loadNextImage();
+          this.loadNextImage(position);
         else
-          this.loadPreviousImage();
+          this.loadPreviousImage(position);
 
         startXPosition = null;
         endXPosition = null;
@@ -78,7 +83,7 @@ var ImageSlider = React.createClass({
     };
   },
 
-  loadPreviousImage: function() {
+  loadPreviousImage: function(position) {
     var imageCount = this.state.images.length;
     var currentImageIndex = this.state.imageIndex;
     var newImageIndex = currentImageIndex - 1;
@@ -88,12 +93,20 @@ var ImageSlider = React.createClass({
     return(newImageIndex >= 0 && newImageIndex <= imageCount - 1) ? this.setState({imageIndex: newImageIndex}) : currentImageIndex;
   },
 
-  loadNextImage: function() {
+  loadNextImage: function(position) {
     var imageCount = this.state.images.length;
     var currentImageIndex = this.state.imageIndex;
     var newImageIndex = currentImageIndex + 1;
 
     console.log('Loading next image at index ' + newImageIndex);
+
+    AnimationExperimental.startAnimation({
+      node: this.refs.image,
+      duration: 400,
+      easing: 'easeInQuad',
+      property: 'position',
+      toValue: position
+    });
 
     return(newImageIndex >= 0 && newImageIndex <= imageCount - 1) ? this.setState({imageIndex: newImageIndex}) : currentImageIndex;
   },
